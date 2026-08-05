@@ -1,3 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BANCADA · Aferição de escore de risco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECEDE8; --sheet:#F6F6F2; --ink:#16181A; --soft:#5C625F;
+  --rule:#C6C8C0; --rule-hard:#8E9289;
+  --stamp-red:#A8281E; --stamp-green:#2C6440; --stamp-amber:#8A6209;
+  --graphite:#3A4145;
+  --disp:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.6;padding:0 0 70px}
+.sheet{max-width:920px;margin:0 auto;background:var(--sheet);border-left:1px solid var(--rule);border-right:1px solid var(--rule);min-height:100vh;padding:0 clamp(16px,4vw,44px) 40px}
+@media(max-width:600px){.sheet{border:0}}
+
+/* cabeçalho de certificado */
+.cert{border-bottom:3px double var(--rule-hard);padding:30px 0 16px;margin-bottom:26px}
+.emissor{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft)}
+h1{font-family:var(--disp);font-size:clamp(30px,7.5vw,50px);font-weight:700;letter-spacing:-.025em;line-height:.98;margin:10px 0 4px;text-transform:uppercase}
+.tagline{font-family:var(--disp);font-weight:500;font-size:clamp(13px,3.2vw,16px);letter-spacing:.02em;color:var(--graphite);margin:0 0 16px}
+.thesis{font-size:15px;max-width:60ch;color:var(--graphite);margin:0 0 18px}
+.regs{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.reg{background:var(--sheet);padding:8px 10px}
+.reg .k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--soft)}
+.reg .v{font-family:var(--mono);font-size:13px;font-weight:600;margin-top:2px}
+
+/* seções */
+section{border-top:1px solid var(--rule);padding:22px 0 6px}
+section:first-of-type{border-top:0}
+.head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+.head .num{font-family:var(--mono);font-size:11px;color:var(--soft);letter-spacing:.1em;padding-top:3px}
+h2{font-family:var(--disp);font-size:19px;font-weight:600;letter-spacing:-.01em;margin:0;text-transform:uppercase;flex:1}
+.state-pip{width:9px;height:9px;border-radius:50%;background:var(--rule-hard);flex:0 0 9px;align-self:center}
+.state-pip.on{background:var(--stamp-green)}
+.state-pip.busy{background:var(--stamp-amber);animation:blink 1s infinite}
+.state-pip.err{background:var(--stamp-red)}
+@keyframes blink{50%{opacity:.2}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.lede{color:var(--graphite);font-size:14.5px;margin:0 0 16px;max-width:64ch}
+
+/* controles */
+label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:0 0 5px}
+select,input[type=text],input[type=number]{width:100%;background:#FFF;color:var(--ink);border:1px solid var(--rule-hard);border-radius:0;padding:10px 11px;font-family:var(--mono);font-size:13.5px;margin-bottom:14px}
+input[type=file]{width:100%;font-family:var(--mono);font-size:12px;margin-bottom:14px}
+select:focus,input:focus,button:focus-visible{outline:2px solid var(--graphite);outline-offset:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 12px}
+button{width:100%;background:var(--ink);color:var(--sheet);border:1px solid var(--ink);padding:13px;font-family:var(--disp);font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:.12s}
+button:hover:not(:disabled){background:var(--graphite);border-color:var(--graphite)}
+button:disabled{opacity:.3;cursor:not-allowed}
+button.outline{background:transparent;color:var(--ink)}
+button.outline:hover:not(:disabled){background:var(--ink);color:var(--sheet)}
+.hint{font-size:13px;color:var(--soft);margin:-8px 0 14px;max-width:64ch}
+.hint code,code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.05);padding:1px 4px}
+
+.console{font-family:var(--mono);font-size:11.5px;line-height:1.75;background:#FFF;border:1px solid var(--rule-hard);padding:9px 11px;max-height:200px;overflow-y:auto;margin:12px 0 4px;white-space:pre-wrap;word-break:break-word}
+.console .e{color:var(--stamp-red)}.console .w{color:var(--stamp-amber)}.console .g{color:var(--stamp-green)}.console .m{color:var(--soft)}
+
+/* tabelas */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:18px}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{border-bottom:1.5px solid var(--rule-hard);color:var(--soft);font-weight:500;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+td.pass{color:var(--stamp-green);font-weight:600}
+td.fail{color:var(--stamp-red);font-weight:600}
+td.na{color:var(--soft)}
+tr.total td{border-top:1.5px solid var(--rule-hard);font-weight:600}
+
+h3{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin:26px 0 4px;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+h3:first-child{margin-top:0}
+
+/* medidores */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(146px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:18px}
+.gauge{background:#FFF;padding:11px 12px}
+.gauge .k{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft)}
+.gauge .v{font-family:var(--mono);font-size:25px;font-weight:600;margin-top:3px;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.gauge .c{font-family:var(--mono);font-size:10.5px;color:var(--soft);margin-top:1px}
+.v.ok{color:var(--stamp-green)}.v.mid{color:var(--stamp-amber)}.v.no{color:var(--stamp-red)}
+
+/* CARIMBO — elemento assinatura */
+.stampwrap{display:flex;justify-content:center;padding:26px 0 30px}
+.stamp{border:3px double currentColor;padding:14px 26px 12px;text-align:center;transform:rotate(-2.4deg);max-width:420px;position:relative}
+.stamp.emitido{color:var(--stamp-green)}
+.stamp.negado{color:var(--stamp-red)}
+.stamp .top{font-family:var(--mono);font-size:9px;letter-spacing:.28em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:5px;margin-bottom:7px}
+.stamp .mid{font-family:var(--disp);font-size:clamp(21px,5.6vw,31px);font-weight:700;letter-spacing:.04em;line-height:1.04;text-transform:uppercase}
+.stamp .bot{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;margin-top:7px;border-top:1px solid currentColor;padding-top:5px}
+
+.finding{border-left:3px solid var(--rule-hard);padding:12px 0 12px 15px;margin:0 0 18px;background:rgba(0,0,0,.018)}
+.finding.no{border-color:var(--stamp-red)}
+.finding.ok{border-color:var(--stamp-green)}
+.finding.mid{border-color:var(--stamp-amber)}
+.finding .t{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;margin-bottom:5px}
+.finding.no .t{color:var(--stamp-red)}.finding.ok .t{color:var(--stamp-green)}.finding.mid .t{color:var(--stamp-amber)}
+.finding p{margin:0 0 7px;font-size:14.5px}
+.finding p:last-child{margin-bottom:0}
+.finding .do{font-family:var(--mono);font-size:12.5px;color:var(--graphite);border-top:1px dotted var(--rule-hard);padding-top:7px;margin-top:9px}
+
+.money{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.big-money{font-family:var(--disp);font-size:clamp(26px,7vw,40px);font-weight:700;letter-spacing:-.025em;font-variant-numeric:tabular-nums;line-height:1}
+.hidden{display:none}
+.bar{height:2px;background:var(--rule);margin:11px 0;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ink);transition:width .18s}
+canvas{display:block;width:100%;background:#FFF;border:1px solid var(--rule-hard)}
+.curves{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:6px}
+@media(max-width:560px){.curves{grid-template-columns:1fr}.grid2,.grid3{grid-template-columns:1fr}}
+@media(max-width:420px){.gauges{grid-template-columns:1fr 1fr}.stamp{padding:12px 14px}}
+.cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--soft);margin-top:5px}
+footer{border-top:3px double var(--rule-hard);margin-top:34px;padding-top:16px;font-family:var(--mono);font-size:10.5px;color:var(--soft);line-height:1.9}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="cert">
+  <div class="emissor">Bancada de aferição · escore de risco transacional</div>
+  <h1>Bancada</h1>
+  <p class="tagline">O laudo que o seu fornecedor de antifraude não emite.</p>
+  <p class="thesis">Você paga por um escore de risco. Alguém te mostrou um slide com uma acurácia. Esta bancada mede se aquele número se sustenta — e, antes disso, mede a si própria contra um sinal de força conhecida. Se a bancada não passar na própria aferição, ela não emite laudo nenhum.</p>
+  <div class="regs">
+    <div class="reg"><div class="k">Versão</div><div class="v" id="rVer">1.0</div></div>
+    <div class="reg"><div class="k">Protocolo</div><div class="v" id="rProt">—</div></div>
+    <div class="reg"><div class="k">Processamento</div><div class="v">Local</div></div>
+    <div class="reg"><div class="k">Envio de dados</div><div class="v">Nenhum</div></div>
+  </div>
+</div>
+
 <!-- 1 · DADOS -->
 <section>
   <div class="head"><span class="num">01</span><h2>Amostra</h2><span class="state-pip" id="p1"></span></div>
@@ -17,6 +155,7 @@
       <option value="valor">Fornecedor que só reflete o valor da compra</option>
       <option value="inutil">Fornecedor sem sinal real</option>
       <option value="pequeno">Amostra pequena demais para concluir</option>
+      <option value="limitrofe">Amostra no limite — passa no tamanho, falha no poder</option>
       <option value="instavel">Funciona nas compras baixas, cega nas altas</option>
     </select>
     <p class="hint" id="cenDesc"></p>
@@ -111,11 +250,14 @@
   <div class="head"><span class="num">08</span><h2>Emissão</h2><span class="state-pip on"></span></div>
   <button id="btnMd">Baixar laudo técnico (.md)</button>
   <div style="height:10px"></div>
+  <button id="btnVer" class="outline">Ver laudo na tela, para copiar</button>
+  <div style="height:10px"></div>
   <button id="btnJson" class="outline">Baixar números brutos (.json)</button>
+  <div id="laudoTexto"></div>
 </section>
 
 <footer>
-BANCADA v1.0 · aferição de escore de risco transacional<br>
+BANCADA v1.0 · aferição de escore de risco transacional · <a href="manual.html" style="color:var(--ink)">manual de uso</a><br>
 Tudo roda no seu aparelho. Nenhuma linha da sua amostra sai daqui — dá para conferir com a aba de rede aberta.<br>
 Um laudo negado não é falha da ferramenta. É a ferramenta funcionando.
 </footer>
@@ -152,6 +294,7 @@ Um laudo negado não é falha da ferramenta. É a ferramenta funcionando.
    ═════════════════════════════════════════════════════════════════ */
 
 /* ───────── básico ───────── */
+const yield_=()=>new Promise(r=>setTimeout(r,0));
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
   t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 const mean=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
@@ -196,31 +339,35 @@ function indicePorGrupo(groups){
   uniq.forEach(g=>byG.set(g,[]));groups.forEach((g,i)=>byG.get(g).push(i));
   return {uniq,byG};}
 
-function clusterBootCI(y,s,groups,reps=1200,seed=7){
+/* Assíncrono de propósito: em celular um laço de mil reamostragens trava a aba
+   e o navegador encerra a página. Cede a vez a cada 40 voltas e informa avanço. */
+async function clusterBootCI(y,s,groups,reps=800,seed=7,prog=null){
   const rnd=mulberry32(seed),{uniq,byG}=indicePorGrupo(groups);const out=[];
   for(let r=0;r<reps;r++){const yy=[],ss=[];
     for(let c=0;c<uniq.length;c++){const g=uniq[Math.floor(rnd()*uniq.length)];
       for(const i of byG.get(g)){yy.push(y[i]);ss.push(s[i]);}}
-    if(new Set(yy).size<2)continue;const a=auroc(yy,ss);if(!isNaN(a))out.push(a);}
+    if(new Set(yy).size>=2){const a=auroc(yy,ss);if(!isNaN(a))out.push(a);}
+    if(r%40===39){if(prog)prog((r+1)/reps);await yield_();}}
   out.sort((a,b)=>a-b);
   return out.length?[out[Math.floor(out.length*.025)],out[Math.floor(out.length*.975)]]:[NaN,NaN];}
 
-function bootDelta(y,sA,sB,groups,reps=1000,seed=11){
+async function bootDelta(y,sA,sB,groups,reps=800,seed=11,prog=null){
   const pontual=auroc(y,sA)-auroc(y,sB);
   const rnd=mulberry32(seed),{uniq,byG}=indicePorGrupo(groups);const out=[];
   for(let r=0;r<reps;r++){const yy=[],a=[],b=[];
     for(let c=0;c<uniq.length;c++){const g=uniq[Math.floor(rnd()*uniq.length)];
       for(const i of byG.get(g)){yy.push(y[i]);a.push(sA[i]);b.push(sB[i]);}}
-    if(new Set(yy).size<2)continue;
-    const x=auroc(yy,a),z=auroc(yy,b);
-    if(!isNaN(x)&&!isNaN(z))out.push(x-z);}
+    if(new Set(yy).size>=2){
+      const x=auroc(yy,a),z=auroc(yy,b);
+      if(!isNaN(x)&&!isNaN(z))out.push(x-z);}
+    if(r%40===39){if(prog)prog((r+1)/reps);await yield_();}}
   out.sort((p,q)=>p-q);
   if(!out.length)return {delta:pontual,lo:NaN,hi:NaN,excluiZero:false};
   const lo=out[Math.floor(out.length*.025)],hi=out[Math.floor(out.length*.975)];
   return {delta:pontual,lo,hi,excluiZero:(lo>0||hi<0)};}
 
 /* ───────── classificador (para o teste incremental) ───────── */
-function fitLogreg(X,y,{lr=0.5,epochs=900,l2=0.01}={}){
+function fitLogreg(X,y,{lr=1.0,epochs=300,l2=0.01}={}){
   const n=X.length,d=X[0].length;let w=new Array(d).fill(0),b=0;
   for(let e=0;e<epochs;e++){const gw=new Array(d).fill(0);let gb=0;
     for(let i=0;i<n;i++){let z=b;for(let j=0;j<d;j++)z+=w[j]*X[i][j];
@@ -231,7 +378,7 @@ const predict=(m,x)=>{let z=m.b;for(let j=0;j<x.length;j++)z+=m.w[j]*x[j];return
 function standardize(Xtr,Xte){const d=Xtr[0].length,mu=[],sd=[];
   for(let j=0;j<d;j++){const c=Xtr.map(r=>r[j]);mu.push(mean(c));const s=std(c);sd.push(s<1e-8?1:s);}
   const tf=X=>X.map(r=>r.map((v,j)=>(v-mu[j])/sd[j]));return [tf(Xtr),tf(Xte)];}
-function groupedCV(X,y,groups,k=5,seed=42){
+async function groupedCV(X,y,groups,k=5,seed=42){
   const uniq=[...new Set(groups)],rnd=mulberry32(seed);
   for(let i=uniq.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[uniq[i],uniq[j]]=[uniq[j],uniq[i]];}
   const fold=new Map();uniq.forEach((g,i)=>fold.set(g,i%k));
@@ -241,7 +388,8 @@ function groupedCV(X,y,groups,k=5,seed=42){
     if(!tr.length||!te.length||new Set(tr.map(i=>y[i])).size<2)continue;
     const [Xtr,Xte]=standardize(tr.map(i=>X[i]),te.map(i=>X[i]));
     const mdl=fitLogreg(Xtr,tr.map(i=>y[i]));
-    te.forEach((idx,j)=>{oof[idx]=predict(mdl,Xte[j]);});}
+    te.forEach((idx,j)=>{oof[idx]=predict(mdl,Xte[j]);});
+    await yield_();}
   return oof;}
 
 function precAtRec(y,s,t){const ord=y.map((_,i)=>i).sort((a,b)=>s[b]-s[a]);
@@ -290,6 +438,8 @@ function varreduraCusto(y,s,valor,cRev,efic){
     const custo=rev*cRev+perda;
     if(!best||custo<best.custo)best={t,rev,perda,custo,revFrac:rev/n};
   }
+  best.semTriagem=!isFinite(best.t);
+  best.rotuloCorte=best.semTriagem?'sem revisão':best.t.toFixed(0);
   const custoTudo=n*cRev+perdaTotal*(1-efic);
   const custoNada=perdaTotal;
   const alt=Math.min(custoTudo,custoNada);
@@ -323,7 +473,7 @@ function estadoDaBancada(v){
       motivo:'o controle positivo não rodou',acao:'Rodar a aferição.',emite:false};
   if(!v.perm.limpo)
     return {e:'A',rot:'LAUDO NÃO EMITIDO',sub:'VAZAMENTO DETECTADO',
-      motivo:'com os rótulos embaralhados 250 vezes, a separação média não voltou a 0,50 como deveria',
+      motivo:'com os rótulos embaralhados centenas de vezes, a separação média não voltou a 0,50 como deveria',
       acao:'Isto é defeito de dado ou de encadeamento, não resultado. Conferir se o escore foi gerado ANTES do desfecho e não recalculado depois de a fraude ser conhecida.',emite:false};
   if(!v.calib.correto)
     return {e:'A',rot:'LAUDO NÃO EMITIDO',sub:'BANCADA DESCALIBRADA',
@@ -359,7 +509,6 @@ const ic=o=>isNaN(o.lo)?'—':'['+o.lo.toFixed(3)+', '+o.hi.toFixed(3)+']';
 const ic2=a=>isNaN(a[0])?'—':'['+a[0].toFixed(3)+', '+a[1].toFixed(3)+']';
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const $=id=>document.getElementById(id);
-const yield_=()=>new Promise(r=>setTimeout(r,0));
 
 const B={linhas:[],cols:[],rodadas:[],protocolo:null};
 
@@ -392,9 +541,12 @@ const CENARIOS={
   limitrofe:{d:'Amostra que passa no mínimo de tamanho mas ainda não sustenta conclusão. A bancada mede na direção certa e mesmo assim se recusa a concluir, por falta de precisão.',auroc:0.84,tipo:'normal',n:800,f:4.0},
   instavel:{d:'Separa bem nas compras baratas e é cego nas caras — exatamente onde a perda mora. Deve travar no Estado C.',auroc:0.80,tipo:'instavel'}
 };
-$('cenario').onchange=()=>{$('cenDesc').textContent=CENARIOS[$('cenario').value].d;
+const SIM_PADRAO={n:4000,f:1.6};
+$('cenario').onchange=()=>{
   const c=CENARIOS[$('cenario').value];
-  if(c.n){$('simN').value=c.n;$('simF').value=c.f;}};
+  $('cenDesc').textContent=c.d;
+  $('simN').value=c.n||SIM_PADRAO.n;
+  $('simF').value=c.f||SIM_PADRAO.f;};
 $('cenDesc').textContent=CENARIOS.bom.d;
 
 $('fonte').onchange=e=>{$('boxSim').classList.toggle('hidden',e.target.value!=='sim');
@@ -458,9 +610,10 @@ function parseCSV(txt){
 }
 function num(v){
   if(v===null||v===undefined||v==='')return NaN;
-  let s=String(v).replace(/[R$\s]/g,'');
+  let s=String(v).replace(/[R$\s]/g,'').replace(/\u00A0/g,'');
   if(s.includes(',')&&s.includes('.'))s=s.replace(/\./g,'').replace(',','.');
   else if(s.includes(','))s=s.replace(',','.');
+  else if(/^-?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,'');
   return parseFloat(s);
 }
 $('arq').onchange=async e=>{
@@ -498,9 +651,10 @@ $('btnCarregar').onclick=()=>{
       linhas=[];
       B.rowsRaw.forEach((r,i)=>{
         const e=num(r[cE]),v=num(r[cV]);
-        const draw=String(r[cD]).trim().toLowerCase();
-        const d=['1','sim','s','true','y','yes','fraude','fraud'].includes(draw)?1:
-                (['0','nao','não','n','false','no','legitima','legítima','ok'].includes(draw)?0:NaN);
+        const draw=String(r[cD]).trim().toLowerCase().replace(/\.0+$/,'');
+        const POS=['1','sim','s','true','y','yes','fraude','fraud','fraudulenta','chargeback','cb','contestada','negada','positivo'];
+        const NEG=['0','nao','não','n','false','no','legitima','legítima','legítimo','ok','aprovada','normal','negativo'];
+        const d=POS.includes(draw)?1:(NEG.includes(draw)?0:NaN);
         if(!isFinite(e)||!isFinite(v)||isNaN(d)){desc++;return;}
         linhas.push({escore:e,y:d,valor:v,g:cG?String(r[cG]||'L'+i):'L'+i});
       });
@@ -539,14 +693,26 @@ $('btnRodar').onclick=async()=>{
   const b=$('btnRodar');b.disabled=true;setPip('p4','busy');
   $('logRodar').innerHTML='';
   ['secBancada','secLaudo','secEcon','secEmit'].forEach(s=>$(s).classList.add('hidden'));
+  $('laudoTexto').innerHTML='';$('btnVer').textContent='Ver laudo na tela, para copiar';
   const t0=performance.now();
   try{
     const L=B.linhas;
+    /* Reamostragem custa O(reps · n log n). Acima de ~8 mil casos, mais repetições
+       quase não estreitam o intervalo e travam a aba. Escala declarada no laudo. */
+    const REPS=(nn=>nn>20000?{calib:250,ci:300,delta:300,perm:120}:
+                     nn>8000 ?{calib:350,ci:500,delta:500,perm:180}:
+                              {calib:500,ci:800,delta:800,perm:250})(B.linhas.length);
+    /* Faixas de avanço da barra, por etapa. */
+    const av=(a,b)=>f=>setBar('barRodar',a+(b-a)*f);
     const Y=L.map(r=>r.y), S=L.map(r=>r.escore), V=L.map(r=>r.valor), G=L.map(r=>r.g);
     const n=L.length, nPos=Y.filter(v=>v===1).length;
 
+    if(nPos===0)throw new Error('nenhuma fraude confirmada na amostra — sem as duas classes não há o que medir. Confira a coluna de desfecho e o mapeamento.');
+    if(nPos===n)throw new Error('todas as linhas estão marcadas como fraude — sem as duas classes não há o que medir. Confira a coluna de desfecho e o mapeamento.');
+    if(new Set(S).size<2)throw new Error('o escore tem o mesmo valor em todas as linhas. Confira se a coluna mapeada é mesmo a do escore.');
     const amostra={n,nPos,passa:n>=LIM.n_min.v&&nPos>=LIM.pos_min.v};
     log('logRodar','amostra '+fmt0(n)+' casos / '+fmt0(nPos)+' fraudes · '+(amostra.passa?'suficiente':'INSUFICIENTE'),amostra.passa?'g':'e');
+    if(n>2000)log('logRodar','amostra grande — em celular a aferição pode levar de 30 a 60 segundos. A barra avança durante o cálculo.','w');
     setBar('barRodar',.08);await yield_();
 
     /* ── controle positivo por calibração ── */
@@ -559,14 +725,14 @@ $('btnRodar').onclick=async()=>{
       const alpha=Math.SQRT2*invNorm(alvo);
       const sc=Y.map(y=>alpha*y+gs());
       const med=auroc(Y,sc);
-      const ciC=clusterBootCI(Y,sc,G,900,31+k);
+      const ciC=await clusterBootCI(Y,sc,G,REPS.calib,31+k,av(.05+k*.12,.17+k*.12));
       const larg=ciC[1]-ciC[0];
       const erro=Math.abs(med-alvo);
       const dentro=ciC[0]<=alvo&&alvo<=ciC[1];
       pontos.push({alvo,medido:med,ci:ciC,largura:larg,erro,dentro,preciso:larg<LIM.calib_ic.v});
       log('logRodar','  alvo '+alvo.toFixed(2)+' → medido '+med.toFixed(4)+' · IC '+ic2(ciC)+' (largura '+larg.toFixed(3)+')',
         dentro&&larg<LIM.calib_ic.v?'g':'e');
-      setBar('barRodar',.08+.22*(k+1)/alvos.length);await yield_();
+      await yield_();
     }
     const calib={executado:true,pontos,
       erroMax:Math.max(...pontos.map(p=>p.erro)),
@@ -578,13 +744,14 @@ $('btnRodar').onclick=async()=>{
     setBar('barRodar',.34);await yield_();
 
     /* ── teste de permutação: valida o encadeamento E testa o escore ── */
-    log('logRodar','permutando rótulos 250 vezes');
-    const perm=(()=>{
+    log('logRodar','permutando rótulos '+REPS.perm+' vezes');
+    const perm=await(async()=>{
       const rnd=mulberry32(5150), obs=auroc(Y,S), nulos=[];
-      for(let r=0;r<250;r++){
+      for(let r=0;r<REPS.perm;r++){
         const Yp=Y.slice();
         for(let i=Yp.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[Yp[i],Yp[j]]=[Yp[j],Yp[i]];}
         const a=auroc(Yp,S);if(!isNaN(a))nulos.push(a);
+        if(r%40===39){av(.30,.38)((r+1)/REPS.perm);await yield_();}
       }
       nulos.sort((a,b)=>a-b);
       const m=mean(nulos), sd=std(nulos);
@@ -597,13 +764,13 @@ $('btnRodar').onclick=async()=>{
     perm.passa=perm.p<LIM.p_perm.v;
     log('logRodar','permutação · média nula '+perm.media.toFixed(4)+' (esperado 0,5000) · '+(perm.limpo?'sem vazamento':'VAZAMENTO'),perm.limpo?'g':'e');
     log('logRodar','permutação · p = '+perm.p.toFixed(4)+' · '+(perm.passa?'sinal acima do acaso':'SEM SINAL'),perm.passa?'g':'e');
-    setBar('barRodar',.46);await yield_();
+    setBar('barRodar',.40);await yield_();
 
     /* ── medida principal ── */
     const A=auroc(Y,S);
-    const ciA=clusterBootCI(Y,S,G,1200,7);
+    const ciA=await clusterBootCI(Y,S,G,REPS.ci,7,av(.40,.55));
     log('logRodar','escore do fornecedor · AUROC '+A.toFixed(4)+' · IC '+ic2(ciA));
-    setBar('barRodar',.55);await yield_();
+    setBar('barRodar',.58);await yield_();
 
     /* ── baselines triviais + teste incremental ── */
     log('logRodar','sinais triviais e teste incremental');
@@ -612,13 +779,13 @@ $('btnRodar').onclick=async()=>{
     const Xfull=L.map((r,i)=>Xbase[i].concat([r.escore]));
     const aValor=auroc(Y,V), aValorD=Math.max(aValor,1-aValor);
     const aFreq0=auroc(Y,L.map(r=>freq.get(r.g))), aFreq=Math.max(aFreq0,1-aFreq0);
-    const oofBase=groupedCV(Xbase,Y,G), aBase=auroc(Y,oofBase);
-    const oofFull=groupedCV(Xfull,Y,G), aFull=auroc(Y,oofFull);
-    const dInc=bootDelta(Y,oofFull,oofBase,G,1000,13);
+    const oofBase=await groupedCV(Xbase,Y,G), aBase=auroc(Y,oofBase);
+    const oofFull=await groupedCV(Xfull,Y,G), aFull=auroc(Y,oofFull);
+    const dInc=await bootDelta(Y,oofFull,oofBase,G,REPS.delta,13,av(.62,.90));
     const incr={executado:true,aValor:aValorD,aFreq,aBase,aFull,delta:dInc,
       passa:dInc.delta>=LIM.incremento.v&&dInc.excluiZero};
     log('logRodar','trivial '+aBase.toFixed(4)+' → trivial+escore '+aFull.toFixed(4)+' · Δ '+sn(dInc.delta)+' '+ic(dInc)+' · '+(incr.passa?'PASSOU':'FALHOU'),incr.passa?'g':'e');
-    setBar('barRodar',.75);await yield_();
+    setBar('barRodar',.92);await yield_();
 
     /* ── estabilidade por faixa ── */
     const fx=aurocPorFaixa(Y,S,V,4);
@@ -637,7 +804,7 @@ $('btnRodar').onclick=async()=>{
     econ.ganhoMes=econ.ganho*econ.escala;
     econ.custoMes=econ.custo*econ.escala;
     econ.altMes=econ.alt*econ.escala;
-    log('logRodar','economia · corte em '+econ.t.toFixed(0)+' · revisa '+(econ.revFrac*100).toFixed(1)+'% · ganho '+fmtBRL0(econ.ganhoMes)+'/mês');
+    log('logRodar','economia · corte em '+econ.rotuloCorte+' · revisa '+(econ.revFrac*100).toFixed(1)+'% · ganho '+fmtBRL0(econ.ganhoMes)+'/mês');
     setBar('barRodar',.95);await yield_();
 
     /* ── estado ── */
@@ -645,7 +812,11 @@ $('btnRodar').onclick=async()=>{
     const est=estadoDaBancada(val);
     const ciclo=+$('ciclo').value, papel=$('papel').value;
     if(ciclo>LIM.ciclos.v){est.orcamento=true;est.emite=false;
-      est.rot='LAUDO NÃO EMITIDO';est.sub='ORÇAMENTO DE RODADAS ESTOURADO';}
+      est.estadoOriginal=est.sub;
+      est.rot='LAUDO NÃO EMITIDO';est.sub='ORÇAMENTO DE RODADAS ESTOURADO';
+      est.motivo='esta é a rodada '+(ciclo+1)+' na mesma amostra, acima do teto de '+LIM.ciclos.v+
+        ' fixado antes da primeira medição (a aferição em si terminou em: '+est.estadoOriginal+')';
+      est.acao='Usar uma amostra nova e intocada para confirmar. Reajustar até passar sempre acaba passando, e o resultado deixa de significar alguma coisa.';}
 
     const prec={};[0.50,0.70,0.85,0.95].forEach(t=>prec[t]=precAtRec(Y,S,t));
 
@@ -772,7 +943,7 @@ function desenhar(){
    '<div class="cap" style="margin-top:5px">contra '+esc(ec.altNome)+' · '+(ec.ganhoPct>0?'':'−')+Math.abs(ec.ganhoPct).toFixed(1)+'% do custo</div></div>';
 
   m+='<div class="tw"><table><thead><tr><th>Estratégia</th><th class="n">Custo mensal</th><th class="n">Revisa</th><th class="n">Fraude que passa</th></tr></thead><tbody>'+
-   '<tr><td>Triagem pelo escore (corte '+ec.t.toFixed(0)+')</td><td class="n">'+fmtBRL0(ec.custoMes)+'</td>'+
+   '<tr><td>Triagem pelo escore (corte '+ec.rotuloCorte+')</td><td class="n">'+fmtBRL0(ec.custoMes)+'</td>'+
    '<td class="n">'+(ec.revFrac*100).toFixed(1)+'%</td><td class="n">'+fmtBRL0(ec.perda*ec.escala)+'</td></tr>'+
    '<tr><td>Revisar tudo</td><td class="n">'+fmtBRL0(ec.custoTudo*ec.escala)+'</td><td class="n">100%</td>'+
    '<td class="n">'+fmtBRL0(ec.perdaTotal*(1-r.efic)*ec.escala)+'</td></tr>'+
@@ -781,7 +952,7 @@ function desenhar(){
    '</tbody></table></div>';
 
   m+='<div class="tw"><table><thead><tr><th>No corte ótimo</th><th class="n">Valor</th></tr></thead><tbody>'+
-   '<tr><td>Ponto de corte no escore</td><td class="n">'+ec.t.toFixed(0)+'</td></tr>'+
+   '<tr><td>Ponto de corte no escore</td><td class="n">'+ec.rotuloCorte+'</td></tr>'+
    '<tr><td>Fila de revisão</td><td class="n">'+fmt0(Math.round(ec.revFrac*r.volMes))+' casos/mês</td></tr>'+
    '<tr><td>Fraudes que entram na fila</td><td class="n">'+ec.fraudesBarradas+' de '+ec.fraudesTotal+' ('+(ec.fraudesBarradas/ec.fraudesTotal*100).toFixed(1)+'%)</td></tr>'+
    '<tr><td>Custo de revisão</td><td class="n">'+fmtBRL0(ec.rev*r.cRev*ec.escala)+'/mês</td></tr>'+
@@ -808,7 +979,7 @@ function baixar(nome,txt,tipo){const b=new Blob([txt],{type:tipo}),u=URL.createO
 $('btnJson').onclick=()=>baixar('bancada-'+B.protocolo+'.json',
   JSON.stringify(B.rodadas.map(({roc,pr,...k})=>k),null,2),'application/json');
 
-$('btnMd').onclick=()=>{
+function gerarLaudoMd(){
   const r=B.rodadas[B.rodadas.length-1], v=r.val, e=r.estado, ec=r.econ;
   const st=b=>b?'PASSOU':'FALHOU';
   const N=x=>isNaN(x)?'—':x.toFixed(4);
@@ -969,7 +1140,7 @@ que o mês se parece com a amostra. Se qualquer uma dessas premissas estiver oti
 
 | Estratégia | Custo mensal | Revisa | Fraude que passa |
 |---|---|---|---|
-| Triagem pelo escore (corte ${ec.t.toFixed(0)}) | ${fmtBRL0(ec.custoMes)} | ${(ec.revFrac*100).toFixed(1)}% | ${fmtBRL0(ec.perda*ec.escala)} |
+| Triagem pelo escore (corte ${ec.rotuloCorte}) | ${fmtBRL0(ec.custoMes)} | ${(ec.revFrac*100).toFixed(1)}% | ${fmtBRL0(ec.perda*ec.escala)} |
 | Revisar tudo | ${fmtBRL0(ec.custoTudo*ec.escala)} | 100% | ${fmtBRL0(ec.perdaTotal*(1-r.efic)*ec.escala)} |
 | Não revisar nada | ${fmtBRL0(ec.custoNada*ec.escala)} | 0% | ${fmtBRL0(ec.perdaTotal*ec.escala)} |
 
@@ -977,7 +1148,7 @@ que o mês se parece com a amostra. Se qualquer uma dessas premissas estiver oti
 
 | No corte ótimo | Valor |
 |---|---|
-| Ponto de corte | ${ec.t.toFixed(0)} |
+| Ponto de corte | ${ec.rotuloCorte} |
 | Fila de revisão | ${fmt0(Math.round(ec.revFrac*r.volMes))} casos/mês |
 | Fraudes na fila | ${ec.fraudesBarradas} de ${ec.fraudesTotal} (${(ec.fraudesBarradas/ec.fraudesTotal*100).toFixed(1)}%) |
 | Custo de revisão | ${fmtBRL0(ec.rev*r.cRev*ec.escala)}/mês |
@@ -1006,7 +1177,27 @@ ${r.fonte==='sim'?'\n**AVISO.** Esta rodada usou dado SINTÉTICO do simulador em
 *BANCADA v1.0 · protocolo ${r.protocolo} · processamento local · nenhum dado transmitido.*
 *Um laudo negado é a bancada funcionando. Emitir conclusão a partir de instrumento não aferido é o que este documento existe para impedir.*
 `;
-  baixar('LAUDO_'+r.protocolo+'.md',md,'text/markdown');
+  return md;
+}
+
+$('btnMd').onclick=()=>{
+  const r=B.rodadas[B.rodadas.length-1];
+  baixar('LAUDO_'+r.protocolo+'.md',gerarLaudoMd(),'text/markdown');
+};
+
+/* No iPhone o Safari costuma ignorar o atributo de download e abrir o arquivo
+   em vez de salvá-lo. Esta saída funciona em qualquer aparelho. */
+$('btnVer').onclick=()=>{
+  const cx=$('laudoTexto');
+  if(cx.innerHTML){cx.innerHTML='';$('btnVer').textContent='Ver laudo na tela, para copiar';return;}
+  const md=gerarLaudoMd();
+  cx.innerHTML='<p class="hint" style="margin-top:14px">Toque no texto e segure para selecionar tudo e copiar. '+
+    'Em iPhone o download direto às vezes abre o arquivo em vez de salvar — por isso esta saída existe.</p>'+
+    '<textarea id="laudoTA" readonly spellcheck="false" style="width:100%;height:320px;'+
+    'font-family:var(--mono);font-size:11px;line-height:1.6;border:1px solid var(--rule-hard);'+
+    'padding:10px;background:#FFF;color:var(--ink);border-radius:0;-webkit-appearance:none"></textarea>';
+  $('laudoTA').value=md;
+  $('btnVer').textContent='Ocultar laudo';
 };
 </script>
 </body>
