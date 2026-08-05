@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual · BANCADA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECEDE8; --sheet:#F6F6F2; --ink:#16181A; --soft:#5C625F;
+  --rule:#C6C8C0; --rule-hard:#8E9289;
+  --stamp-red:#A8281E; --stamp-green:#2C6440; --stamp-amber:#8A6209;
+  --graphite:#3A4145;
+  --disp:'Archivo',system-ui,sans-serif;
+  --body:'Source Serif 4',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.68;padding-bottom:60px}
+.sheet{max-width:800px;margin:0 auto;background:var(--sheet);border-left:1px solid var(--rule);border-right:1px solid var(--rule);min-height:100vh;padding:0 clamp(16px,4.5vw,48px) 40px}
+@media(max-width:600px){.sheet{border:0}}
+
+.cert{border-bottom:3px double var(--rule-hard);padding:30px 0 18px;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--soft)}
+h1{font-family:var(--disp);font-size:clamp(30px,8vw,52px);font-weight:700;letter-spacing:-.03em;line-height:.96;margin:10px 0 6px;text-transform:uppercase}
+.tag{font-family:var(--disp);font-weight:500;font-size:clamp(13px,3.4vw,17px);color:var(--graphite);margin:0 0 16px}
+.abre{font-size:16.5px;max-width:62ch;margin:0 0 18px}
+.linkbar{font-family:var(--mono);font-size:12px;border:1px solid var(--rule-hard);padding:10px 12px;background:#FFF}
+.linkbar a{color:var(--ink)}
+
+nav{border-bottom:1px solid var(--rule);padding:16px 0 18px;margin-bottom:6px}
+nav .t{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--soft);margin-bottom:9px}
+nav ol{margin:0;padding-left:20px;columns:2;column-gap:26px;font-family:var(--mono);font-size:12.5px;line-height:2}
+@media(max-width:560px){nav ol{columns:1}}
+nav a{color:var(--graphite);text-decoration:none;border-bottom:1px solid var(--rule)}
+nav a:hover,nav a:focus{color:var(--ink);border-color:var(--ink)}
+
+section{border-top:1px solid var(--rule);padding:26px 0 4px;scroll-margin-top:12px}
+.hd{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.hd .n{font-family:var(--mono);font-size:11px;color:var(--soft);letter-spacing:.1em}
+h2{font-family:var(--disp);font-size:21px;font-weight:600;letter-spacing:-.012em;margin:0;text-transform:uppercase}
+h3{font-family:var(--disp);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin:26px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--rule)}
+p{margin:0 0 14px;max-width:66ch}
+ul,ol.steps{max-width:66ch;padding-left:22px;margin:0 0 16px}
+li{margin-bottom:8px}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:13px;background:rgba(0,0,0,.055);padding:1px 5px}
+a{color:var(--ink)}
+
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 0 18px}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;min-width:440px}
+th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--rule);vertical-align:top}
+thead th{border-bottom:1.5px solid var(--rule-hard);color:var(--soft);font-weight:500;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.prose{font-family:var(--body);font-size:14.5px;line-height:1.55}
+
+.box{border-left:3px solid var(--rule-hard);padding:13px 0 13px 16px;margin:0 0 18px;background:rgba(0,0,0,.02)}
+.box.warn{border-color:var(--stamp-red)}
+.box.note{border-color:var(--stamp-amber)}
+.box.good{border-color:var(--stamp-green)}
+.box .t{font-family:var(--disp);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.box.warn .t{color:var(--stamp-red)}.box.note .t{color:var(--stamp-amber)}.box.good .t{color:var(--stamp-green)}
+.box p:last-child{margin-bottom:0}
+
+pre{font-family:var(--mono);font-size:12px;line-height:1.75;background:#FFF;border:1px solid var(--rule-hard);padding:12px 13px;overflow-x:auto;margin:0 0 16px}
+
+.step{display:grid;grid-template-columns:34px 1fr;gap:14px;margin-bottom:20px;align-items:start}
+.step .k{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--sheet);background:var(--ink);width:26px;height:26px;display:grid;place-items:center;margin-top:2px}
+.step .b p{margin-bottom:8px}
+.step .b p:last-child{margin-bottom:0}
+.step .b .lbl{font-family:var(--disp);font-size:14.5px;font-weight:600;margin-bottom:4px}
+
+.plain{border:1px solid var(--rule-hard);background:#FFF;padding:14px 15px;margin:0 0 18px}
+.plain .q{font-family:var(--disp);font-size:14px;font-weight:600;margin-bottom:6px}
+.plain p:last-child{margin-bottom:0}
+
+.stampmini{display:inline-block;border:2px double currentColor;padding:3px 9px;font-family:var(--disp);font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap}
+.sm-ok{color:var(--stamp-green)}.sm-no{color:var(--stamp-red)}
+
+footer{border-top:3px double var(--rule-hard);margin-top:36px;padding-top:16px;font-family:var(--mono);font-size:10.5px;color:var(--soft);line-height:1.9}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<div class="cert">
+  <div class="eyebrow">Manual de operação · versão 1.0</div>
+  <h1>Como usar<br>a Bancada</h1>
+  <p class="tag">Do arquivo bruto ao laudo assinado, em oito passos.</p>
+  <p class="abre">Este manual não exige nenhum conhecimento de estatística. Cada número que a ferramenta devolve está explicado aqui em linguagem comum, com a pergunta que ele responde e a decisão que ele permite tomar. Se você sabe montar uma planilha, sabe operar a Bancada.</p>
+  <div class="linkbar">Ferramenta: <a href="https://fercadista10.github.io/Bancada/">fercadista10.github.io/Bancada</a></div>
+</div>
+
+<nav>
+  <div class="t">Neste manual</div>
+  <ol>
+    <li><a href="#p1">Para que serve</a></li>
+    <li><a href="#p2">Antes de começar</a></li>
+    <li><a href="#p3">Montando a planilha</a></li>
+    <li><a href="#p4">Passo a passo</a></li>
+    <li><a href="#p5">Lendo o resultado</a></li>
+    <li><a href="#p6">Os seis desfechos</a></li>
+    <li><a href="#p7">A conta de dinheiro</a></li>
+    <li><a href="#p8">Erros que invalidam tudo</a></li>
+    <li><a href="#p9">Perguntas frequentes</a></li>
+    <li><a href="#p10">Glossário</a></li>
+  </ol>
+</nav>
+
+<!-- 1 -->
+<section id="p1">
+  <div class="hd"><span class="n">01</span><h2>Para que serve</h2></div>
+  <p>Você contratou um fornecedor de antifraude. Ele te entrega, para cada transação, uma nota de risco — um escore. Ele te disse que essa nota funciona.</p>
+  <p><strong>A Bancada verifica se funciona mesmo.</strong> Você entrega a ela o seu histórico: transações que já tiveram desfecho, o escore que o fornecedor deu na hora, e o que aconteceu depois. Ela devolve um laudo dizendo se aquele escore separa fraude de compra legítima, o quanto ele acrescenta sobre coisas que você já sabe de graça, e quanto dinheiro ele economiza por mês.</p>
+
+  <h3>O que a torna diferente</h3>
+  <p>Antes de julgar o seu escore, a Bancada julga a si mesma. Ela cria escores artificiais cuja resposta certa já é conhecida por cálculo, e verifica se consegue acertá-los na <em>sua</em> amostra. Se ela erra o alvo conhecido, ela não emite laudo — porque um número produzido por um instrumento desregulado não vale nada, mesmo que pareça bom.</p>
+
+  <div class="box good">
+    <div class="t">Regra da casa</div>
+    <p>Um <span class="stampmini sm-no">Laudo não emitido</span> não é defeito. É a ferramenta cumprindo a única promessa que faz: não afirmar o que não pode sustentar.</p>
+  </div>
+
+  <h3>Quando não usar</h3>
+  <ul>
+    <li><strong>Você não sabe o desfecho.</strong> Sem saber quais transações foram fraude, não há o que aferir.</li>
+    <li><strong>Você quer prever o futuro.</strong> A Bancada mede o passado. Fraude reage a mudança de regra; desempenho medido não se transporta automaticamente para frente.</li>
+    <li><strong>Você quer checar viés entre grupos de clientes.</strong> Não é medido aqui e não deve ser inferido daqui.</li>
+  </ul>
+</section>
+
+<!-- 2 -->
+<section id="p2">
+  <div class="hd"><span class="n">02</span><h2>Antes de começar</h2></div>
+  <p>Reúna quatro informações, uma linha por transação:</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>O que</th><th>Onde costuma estar</th><th>Obrigatório</th></tr></thead>
+    <tbody>
+      <tr><td>Escore do fornecedor</td><td class="prose">Retorno da API antifraude, gravado no momento da compra</td><td>sim</td></tr>
+      <tr><td>Desfecho</td><td class="prose">Base de chargeback, contestação ou fraude confirmada</td><td>sim</td></tr>
+      <tr><td>Valor da transação</td><td class="prose">Pedido / fatura</td><td>sim</td></tr>
+      <tr><td>Cliente ou conta</td><td class="prose">CPF, e-mail, ID de conta — pode ser anonimizado</td><td>recomendado</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box warn">
+    <div class="t">Três exigências que não são negociáveis</div>
+    <p><strong>1. O escore tem que ser o da hora da compra.</strong> Se alguém recalculou depois, sabendo o desfecho, o resultado será falsamente ótimo. A Bancada detecta a maior parte desses casos e acusa vazamento, mas não todos.</p>
+    <p><strong>2. Só transações com janela de contestação vencida.</strong> Chargeback demora de 60 a 120 dias. Se você incluir o mês passado, fraudes ainda não contestadas entram como legítimas e o escore parece pior do que é.</p>
+    <p><strong>3. Não use só os casos que passaram por revisão manual.</strong> Este é o erro mais grave e o mais comum. Se você só tem desfecho para o que foi revisado, e a revisão foi escolhida pelo próprio escore, a amostra está enviesada de um jeito que nenhuma estatística conserta. Use um recorte em que o desfecho aparece independentemente do escore.</p>
+  </div>
+
+  <h3>Quantidade mínima</h3>
+  <p>A Bancada exige <strong>300 transações e 25 fraudes confirmadas</strong>. Repare que o que manda é o número de fraudes, não o total: com 50 mil transações e 12 fraudes, ela recusa. A fraude é o evento raro e é ele que governa a precisão da medida.</p>
+  <p>Na prática, com fraude a 1% você precisa de umas 3.000 transações para chegar às 25 fraudes — e de umas 10.000 para o resultado ficar confortável.</p>
+</section>
+
+<!-- 3 -->
+<section id="p3">
+  <div class="hd"><span class="n">03</span><h2>Montando a planilha</h2></div>
+  <p>Exporte do Excel ou do Google Sheets como CSV. O arquivo deve ter uma linha de cabeçalho e uma linha por transação:</p>
+
+<pre>id;escore;desfecho;valor;cliente
+TX-100234;812;1;1.299,00;C-4471
+TX-100235;103;0;89,90;C-1120
+TX-100236;540;0;350,00;C-4471
+TX-100237;779;1;2.480,50;C-9007</pre>
+
+  <h3>O que cada coluna aceita</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Coluna</th><th>Formato aceito</th></tr></thead>
+    <tbody>
+      <tr><td>escore</td><td class="prose">Qualquer escala numérica — 0 a 1, 0 a 100, 0 a 1000, não importa. Só precisa ser consistente, e <strong>maior tem que significar mais risco</strong>. Se no seu fornecedor maior significa mais seguro, inverta antes (por exemplo, <code>1000 − escore</code>).</td></tr>
+      <tr><td>desfecho</td><td class="prose"><code>1</code> ou <code>0</code>. Também aceita <code>sim/não</code>, <code>fraude/legítima</code>, <code>true/false</code>, <code>s/n</code>. Fraude é sempre o <code>1</code>.</td></tr>
+      <tr><td>valor</td><td class="prose">Reais. Aceita <code>1299.00</code> e <code>1.299,00</code>. Cifrão e espaços são ignorados.</td></tr>
+      <tr><td>cliente</td><td class="prose">Qualquer identificador de texto. Pode ser um código anonimizado — a Bancada só precisa saber quais linhas pertencem à mesma pessoa.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box note">
+    <div class="t">Por que a coluna de cliente importa</div>
+    <p>Um mesmo cliente costuma aparecer várias vezes. Se a Bancada não souber disso, ela pode acabar treinando com as compras de janeiro dele e testando com as de março — e vai parecer que acertou, quando na verdade já conhecia a pessoa. Com a coluna preenchida, cada cliente fica inteiro de um lado só, e o resultado é honesto.</p>
+    <p>Sem a coluna, a ferramenta funciona, mas a margem de erro sai otimista. O laudo registra isso.</p>
+  </div>
+
+  <p>Colunas extras não atrapalham — você escolhe na tela qual é qual. A Bancada tenta adivinhar pelos nomes e você confere.</p>
+</section>
+
+<!-- 4 -->
+<section id="p4">
+  <div class="hd"><span class="n">04</span><h2>Passo a passo</h2></div>
+
+  <div class="step"><div class="k">1</div><div class="b">
+    <div class="lbl">Experimente com o simulador primeiro</div>
+    <p>Em <strong>Origem</strong>, deixe <em>Simulador</em>. Escolha o cenário <em>Fornecedor forte</em> e clique em <strong>Carregar amostra</strong> e depois em <strong>Aferir</strong>. Você vê o laudo sendo emitido.</p>
+    <p>Depois repita com <em>Fornecedor que só reflete o valor da compra</em>. O escore parece bom, e mesmo assim a Bancada nega o laudo. Entender por que ela nega nesse caso é entender a ferramenta inteira.</p>
+  </div></div>
+
+  <div class="step"><div class="k">2</div><div class="b">
+    <div class="lbl">Carregue o seu arquivo</div>
+    <p>Troque a origem para <em>Arquivo CSV meu</em> e selecione o arquivo. Aparece o mapeamento de colunas já preenchido por palpite. Confira os quatro campos.</p>
+    <p>Clique em <strong>Carregar amostra</strong>. Você vê quatro medidores: transações, fraudes confirmadas, taxa de fraude e exposição total. Se algum estiver em vermelho, resolva antes de seguir.</p>
+  </div></div>
+
+  <div class="step"><div class="k">3</div><div class="b">
+    <div class="lbl">Preencha os custos</div>
+    <p>Três números da sua operação. Não invente — busque com quem opera.</p>
+    <ul>
+      <li><strong>Custo de revisar 1 caso.</strong> Salário e encargos do analista dividido pelos casos que ele processa. Em operação brasileira típica fica entre R$ 4 e R$ 15.</li>
+      <li><strong>Eficácia da revisão.</strong> De cada 100 fraudes que chegam à mesa do analista, quantas ele barra? Ninguém acerta 100%. Entre 80% e 92% é realista. Chutar alto infla a economia projetada e o laudo vai declarar o seu chute como premissa.</li>
+      <li><strong>Transações por mês.</strong> Serve para projetar o resultado da amostra para o mês inteiro.</li>
+    </ul>
+  </div></div>
+
+  <div class="step"><div class="k">4</div><div class="b">
+    <div class="lbl">Deixe o protocolo como está</div>
+    <p>Na primeira vez, não mexa. <em>Rodada</em> fica em <strong>1ª</strong> e <em>Papel</em> em <strong>Exploração</strong>.</p>
+    <p>Se você rodar, não gostar do resultado, mudar alguma coisa e rodar de novo, aí sim mude para <strong>2ª</strong>. Isso fica registrado no laudo. A partir da 4ª rodada na mesma amostra o laudo é negado automaticamente — porque quem ajusta até passar sempre acaba passando, e o resultado deixa de significar alguma coisa.</p>
+  </div></div>
+
+  <div class="step"><div class="k">5</div><div class="b">
+    <div class="lbl">Clique em Aferir</div>
+    <p>Leva de 5 a 60 segundos conforme o tamanho da amostra. O painel vai narrando cada etapa. Tudo acontece no seu aparelho — pode fechar a internet que continua funcionando.</p>
+  </div></div>
+
+  <div class="step"><div class="k">6</div><div class="b">
+    <div class="lbl">Leia de cima para baixo</div>
+    <p>A seção 05 é sobre a Bancada. A 06 é sobre o seu escore. A 07 é sobre dinheiro. <strong>Leia nessa ordem</strong> — se a 05 reprovou, o que está na 06 e na 07 é diagnóstico, não conclusão.</p>
+  </div></div>
+
+  <div class="step"><div class="k">7</div><div class="b">
+    <div class="lbl">Baixe o laudo</div>
+    <p><strong>Baixar laudo técnico (.md)</strong> gera um documento completo com protocolo, método, todos os números, as premissas que você declarou e os limites da conclusão. É um arquivo de texto — abre em qualquer editor, cola em qualquer lugar.</p>
+    <p>O <strong>.json</strong> traz os números crus, para quem quiser reprocessar.</p>
+  </div></div>
+</section>
+
+<!-- 5 -->
+<section id="p5">
+  <div class="hd"><span class="n">05</span><h2>Lendo o resultado</h2></div>
+
+  <h3>Separação — o número principal</h3>
+  <p>Aparece como <strong>AUROC</strong>, entre 0,50 e 1,00. Leia assim:</p>
+  <div class="plain">
+    <div class="q">Pegue ao acaso uma fraude e uma compra legítima. Com que frequência o escore deu nota maior para a fraude?</div>
+    <p>É isso, literalmente. <strong>0,50</strong> é cara ou coroa: o escore não sabe de nada. <strong>0,75</strong> acerta três em quatro. <strong>0,90</strong> acerta nove em dez. <strong>1,00</strong> seria perfeito e não existe na vida real — se aparecer, desconfie de vazamento.</p>
+  </div>
+  <p>Referência prática para escore antifraude: abaixo de 0,70 é fraco, de 0,70 a 0,80 é útil como sinal auxiliar, acima de 0,85 é bom.</p>
+
+  <h3>O intervalo entre colchetes</h3>
+  <p>Ao lado da separação aparece algo como <code>[0,842, 0,916]</code>. Isso é a margem de erro.</p>
+  <p>Se você medisse de novo com outro grupo de clientes, o número sairia um pouco diferente. O intervalo é a faixa onde o valor verdadeiro provavelmente está. <strong>Um intervalo largo significa que você não tem dado suficiente para afirmar muita coisa</strong> — e é por isso que a Bancada às vezes recusa mesmo com um número aparentemente alto.</p>
+
+  <h3>O valor-p da permutação</h3>
+  <div class="plain">
+    <div class="q">Se eu embaralhasse os rótulos de fraude ao acaso, com que frequência apareceria uma separação tão boa quanto essa por pura sorte?</div>
+    <p>A Bancada faz esse embaralhamento 250 vezes, de verdade. Se a separação do seu escore cabe dentro do que a sorte produz, não há sinal a discutir. <strong>Abaixo de 0,05 há sinal real. Acima disso, não.</strong></p>
+  </div>
+
+  <h3>Ganho sobre o trivial</h3>
+  <p>Este é o teste que quase todo fornecedor reprova, e é o mais importante do laudo.</p>
+  <p>A Bancada monta um previsor bobo, de graça, usando só o que você já tem: o valor da compra e quantas vezes aquele cliente aparece. Depois acrescenta o escore do fornecedor e mede <strong>o quanto ele melhorou</strong>.</p>
+  <p>A pergunta não é se o escore é melhor que nada. É se ele é melhor que a regra que você poderia escrever em duas linhas sem pagar ninguém. O mínimo exigido é <strong>+0,03</strong>.</p>
+  <div class="box note">
+    <div class="t">O caso que mais aparece na prática</div>
+    <p>Escore com separação de 0,70 — parece razoável. Mas o valor da compra sozinho já dá 0,70. Somar o escore não muda nada. Conclusão: você está pagando por uma informação que já tinha. Esse é o cenário <em>Fornecedor que só reflete o valor da compra</em> no simulador, e vale a pena rodar para ver como aparece.</p>
+  </div>
+
+  <h3>Estabilidade por faixa de valor</h3>
+  <p>A Bancada divide a amostra em quatro faixas de ticket e mede cada uma separadamente. Um escore que separa bem nas compras de R$ 50 e é cego nas de R$ 3.000 tem um número global bonito e é inútil — porque o prejuízo mora nas compras caras.</p>
+  <p>A diferença entre a melhor e a pior faixa não pode passar de <strong>0,10</strong>.</p>
+</section>
+
+<!-- 6 -->
+<section id="p6">
+  <div class="hd"><span class="n">06</span><h2>Os seis desfechos</h2></div>
+  <p>O carimbo no alto da seção 06 traz uma destas frases. Cada uma tem um dono e uma ação diferente:</p>
+
+  <div class="tw"><table>
+    <thead><tr><th>Carimbo</th><th>O que aconteceu</th><th>O que fazer</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="stampmini sm-ok">Bancada aferida</span></td>
+        <td class="prose">Tudo passou. O laudo vale.</td>
+        <td class="prose">Ler o resultado e a conta de dinheiro. Usar na decisão.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Amostra insuficiente</span></td>
+        <td class="prose">Menos de 300 casos ou menos de 25 fraudes.</td>
+        <td class="prose">Buscar mais histórico. Não há ajuste de método que compense falta de evento.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Bancada sem poder</span></td>
+        <td class="prose">Passou no mínimo, mas a margem de erro ficou larga demais para separar um escore bom de um ruim.</td>
+        <td class="prose">Também é falta de dado. Ampliar a amostra. Rodar de novo na mesma não muda nada.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Bancada descalibrada</span></td>
+        <td class="prose">Apontada para um alvo conhecido, ela errou a direção.</td>
+        <td class="prose">Conferir a coluna de cliente — agrupamento inconsistente é a causa mais comum. Não usar nenhum número desta rodada.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Vazamento detectado</span></td>
+        <td class="prose">Com rótulos embaralhados o escore ainda separou. Não deveria separar nada.</td>
+        <td class="prose">Verificar se o escore foi mesmo gravado no momento da compra e não recalculado depois com o desfecho na mão.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Sem sinal acima do acaso</span></td>
+        <td class="prose">A separação cabe dentro do que rótulos aleatórios produzem.</td>
+        <td class="prose">Achado sobre o fornecedor, não sobre a ferramenta. Levar o valor-p à renegociação.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Sem ganho sobre o trivial</span></td>
+        <td class="prose">O escore funciona, mas não acrescenta nada ao que você já tinha de graça.</td>
+        <td class="prose">Também é achado sobre o fornecedor. É o argumento mais forte que existe numa renovação de contrato.</td>
+      </tr>
+      <tr>
+        <td><span class="stampmini sm-no">Desempenho instável</span></td>
+        <td class="prose">Separa bem em algumas faixas de valor e mal em outras.</td>
+        <td class="prose">Um número único não representa este escore. Exigir desempenho por faixa, ou operar com corte diferente por faixa.</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="box">
+    <div class="t">Quem é o dono do problema</div>
+    <p>Os três primeiros e o <em>descalibrada</em> são sobre <strong>a sua amostra</strong>. O <em>vazamento</em> é sobre <strong>a sua base</strong>. Os três últimos são sobre <strong>o seu fornecedor</strong> — e nesses casos a Bancada está funcionando perfeitamente: ela nega o laudo porque o escore não sustenta conclusão, e isso é o achado.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="p7">
+  <div class="hd"><span class="n">07</span><h2>A conta de dinheiro</h2></div>
+  <p>A seção 07 responde à pergunta que decide contrato: <strong>quanto isso vale por mês?</strong></p>
+
+  <h3>Como ela pensa</h3>
+  <p>Existem três estratégias possíveis, e a Bancada calcula o custo das três:</p>
+  <ul>
+    <li><strong>Revisar tudo.</strong> Você paga revisão em 100% das transações e barra quase toda a fraude.</li>
+    <li><strong>Não revisar nada.</strong> Você não paga revisão nenhuma e come toda a fraude.</li>
+    <li><strong>Triagem pelo escore.</strong> Você revisa só o que passa de um corte. Paga menos revisão e deixa passar alguma fraude.</li>
+  </ul>
+  <p>Ela testa todos os cortes possíveis, acha o mais barato, e mostra <strong>quanto a triagem economiza contra a melhor das duas alternativas simples</strong>. Se a triagem não ganhar de nenhuma das duas, o número sai negativo — e isso também é uma resposta.</p>
+
+  <h3>O que olhar na tabela</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Linha</th><th>Como usar</th></tr></thead>
+    <tbody>
+      <tr><td>Ponto de corte</td><td class="prose">O número que você configura no seu sistema. Acima dele, revisa.</td></tr>
+      <tr><td>Fila de revisão</td><td class="prose">Quantos casos por mês vão para o analista. Confira se a sua equipe dá conta — se não der, o corte ótimo não é aplicável e vale refazer com o volume que ela suporta.</td></tr>
+      <tr><td>Fraudes na fila</td><td class="prose">Quanto da fraude o corte captura. O resto passa.</td></tr>
+      <tr><td>Perda residual</td><td class="prose">O prejuízo que sobra depois de tudo. É o número que ninguém gosta de ver e todo mundo precisa ver.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="box warn">
+    <div class="t">Cuidado com esta seção</div>
+    <p>A conta é aritmeticamente correta mesmo quando o laudo é negado. Um escore sem sinal nenhum ainda produz um número de economia com muitos zeros — no simulador, o cenário <em>Fornecedor sem sinal real</em> mostra mais de R$ 100 mil por mês, e não vale nada.</p>
+    <p><strong>Só use o número da seção 07 se a seção 06 trouxer o carimbo verde.</strong> É exatamente esse tipo de número solto que um slide de fornecedor te mostra.</p>
+  </div>
+
+  <div class="box note">
+    <div class="t">A projeção é linear</div>
+    <p>A Bancada mede na amostra e multiplica para o volume mensal. Isso assume que o mês se parece com a amostra. Se a sua amostra é de um período atípico — Black Friday, promoção grande, ataque concentrado — a projeção herda a distorção.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="p8">
+  <div class="hd"><span class="n">08</span><h2>Erros que invalidam tudo</h2></div>
+  <p>Em ordem de frequência com que aparecem:</p>
+
+  <div class="tw"><table>
+    <thead><tr><th class="n">#</th><th>Erro</th><th>Consequência</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td class="prose">Usar só transações que passaram por revisão manual</td><td class="prose">Viés de seleção. A Bancada não detecta e o laudo sai válido e errado. É o erro mais perigoso da lista.</td></tr>
+      <tr><td class="n">2</td><td class="prose">Escore recalculado depois do desfecho</td><td class="prose">Vazamento. Normalmente a Bancada acusa, mas nem sempre.</td></tr>
+      <tr><td class="n">3</td><td class="prose">Incluir transações recentes, ainda sem janela de contestação vencida</td><td class="prose">Fraudes contam como legítimas. Subestima o fornecedor.</td></tr>
+      <tr><td class="n">4</td><td class="prose">Escore invertido — maior significa mais seguro</td><td class="prose">Separação abaixo de 0,50. Se aparecer algo como 0,25, é este o motivo.</td></tr>
+      <tr><td class="n">5</td><td class="prose">Não preencher a coluna de cliente</td><td class="prose">Margem de erro otimista. Funciona, mas o laudo registra a ressalva.</td></tr>
+      <tr><td class="n">6</td><td class="prose">Chutar a eficácia da revisão para cima</td><td class="prose">Economia projetada inflada. Fica declarado como premissa sua no laudo.</td></tr>
+      <tr><td class="n">7</td><td class="prose">Rodar várias vezes ajustando até passar</td><td class="prose">A partir da 4ª rodada o laudo é negado automaticamente.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 9 -->
+<section id="p9">
+  <div class="hd"><span class="n">09</span><h2>Perguntas frequentes</h2></div>
+
+  <div class="plain">
+    <div class="q">Meus dados vão para algum servidor?</div>
+    <p>Não. Tudo roda no navegador. Você pode desconectar da internet depois de abrir a página e a ferramenta continua funcionando — é a forma mais simples de conferir. Quem quiser evidência técnica pode abrir a aba de rede do navegador e observar que nenhuma requisição sai.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">Funciona no celular?</div>
+    <p>Funciona, mas amostras grandes ficam lentas. Para arquivos acima de 20 mil linhas, prefira computador.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">Serve para outra coisa além de antifraude?</div>
+    <p>Serve para qualquer escore de risco com desfecho conhecido: análise de crédito, evasão, inadimplência, priorização de cobrança. Os nomes na tela falam de fraude, mas a matemática não sabe do que se trata. Só troque a leitura de "valor da transação" pelo que fizer sentido no seu caso.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">Posso comparar dois fornecedores?</div>
+    <p>Rode uma vez para cada, com a mesma amostra e as mesmas premissas de custo. Compare os laudos. Marque a segunda rodada como <strong>2ª</strong> apenas se você mudou o método entre elas — trocar de fornecedor mantendo tudo igual não gasta rodada.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">A separação deu 0,68. Devo cancelar o contrato?</div>
+    <p>O laudo não responde isso sozinho. Um escore de 0,68 que acrescenta +0,15 sobre o trivial e economiza R$ 200 mil por mês vale a pena. Um de 0,85 que não acrescenta nada, não. Leia sempre o ganho sobre o trivial junto com a conta de dinheiro.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">O laudo é aceito por auditoria ou regulador?</div>
+    <p>Ele documenta método, premissas e limites de forma verificável, o que é mais do que a maioria dos materiais de fornecedor oferece. Mas não é certificação de nenhum órgão e não deve ser apresentado como tal.</p>
+  </div>
+
+  <div class="plain">
+    <div class="q">Por que a ferramenta se recusa a concluir tantas vezes?</div>
+    <p>Porque a maior parte das amostras reais não sustenta conclusão, e as ferramentas que concluem mesmo assim estão errando em silêncio. Cada recusa vem com o motivo e a ação — nenhuma delas te deixa sem saber o próximo passo.</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="p10">
+  <div class="hd"><span class="n">10</span><h2>Glossário</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>Termo</th><th>Em linguagem comum</th></tr></thead>
+    <tbody>
+      <tr><td>AUROC / separação</td><td class="prose">Com que frequência o escore dá nota maior para a fraude do que para a compra legítima, quando você sorteia uma de cada. 0,50 é sorte, 1,00 é perfeito.</td></tr>
+      <tr><td>Intervalo de confiança</td><td class="prose">A faixa onde o número verdadeiro provavelmente está. Quanto mais estreita, mais dado você tem.</td></tr>
+      <tr><td>Valor-p</td><td class="prose">A chance de o resultado ter saído por sorte. Abaixo de 0,05, não foi sorte.</td></tr>
+      <tr><td>Permutação</td><td class="prose">Embaralhar os rótulos de propósito para ver o que a sorte pura produz. Serve de régua.</td></tr>
+      <tr><td>Sinais triviais</td><td class="prose">O que você já sabe de graça: o valor da compra e quantas vezes o cliente aparece.</td></tr>
+      <tr><td>Ganho sobre o trivial</td><td class="prose">O quanto o escore pago melhora o previsor de graça. Se for pouco, você está pagando por nada.</td></tr>
+      <tr><td>Vazamento</td><td class="prose">Quando informação do futuro entrou no escore sem querer. Faz tudo parecer ótimo e nada ser verdade.</td></tr>
+      <tr><td>Controle positivo</td><td class="prose">Apontar o instrumento para algo cuja resposta já se conhece, para ver se ele acerta.</td></tr>
+      <tr><td>Poder</td><td class="prose">Se a amostra é grande o bastante para a medida decidir alguma coisa.</td></tr>
+      <tr><td>Ponto de corte</td><td class="prose">O valor de escore a partir do qual você manda revisar.</td></tr>
+      <tr><td>Eficácia da revisão</td><td class="prose">De cada 100 fraudes que chegam ao analista, quantas ele barra.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>
+Manual da BANCADA v1.0 · escrito para ser lido por quem opera, não por quem faz estatística.<br>
+Ferramenta: <a href="https://fercadista10.github.io/Bancada/">fercadista10.github.io/Bancada</a><br>
+Em caso de dúvida entre confiar no laudo e confiar no slide do fornecedor, peça o laudo dele.
+</footer>
+
+</div>
+</body>
+</html>
